@@ -5,17 +5,19 @@ const grantable = new Set([
   'AuthorizationCode',
   'DeviceCode',
   'RefreshToken',
-  'Session'
+  'Session',
 ])
 
 let store
 
 class MyAdpter {
-  constructor (name) {
+  constructor(name) {
     this.name = name
+
+    debug('%o', 'constructor', this.name)
   }
 
-  upsert (id, payload, expiresIn) {
+  upsert(id, payload, expiresIn) {
     let obj = store.get(this.name).get(id) || {}
     obj = Object.assign(obj, payload)
 
@@ -25,33 +27,48 @@ class MyAdpter {
 
     store.get(this.name).set(id, obj)
 
-    debug('%o', this.name, 'upsert', store.get(this.name).get(id))
+    debug('%o', this.name, 'upsert', id)
+    debug('%o', store.get(this.name).get(id))
+
     return Promise.resolve()
   }
 
-  find (id) {
+  find(id) {
     const obj = store.get(this.name).get(id)
-    debug('%o', this.name, 'find', id, obj)
+
+    debug('%o', this.name, 'find', id)
+    debug('%o', this.name, 'find', obj)
+
     return Promise.resolve(obj)
   }
 
-  consume (id) {
+  consume(id) {
     let obj = store.get(this.name).get(id)
     const now = Date.now()
     obj.consumed = now
 
-    debug('%o', this.name, 'consume', id, obj, now)
+    debug('%o', this.name, 'consume', id, now)
+    debug('%o', this.name, 'consume', obj)
     return Promise.resolve()
   }
 
-  destroy (id) {
+  destroy(id) {
     let obj = store.get(this.name).get(id)
+
+    debug('%o', this.name, 'destroy', id)
+    debug('%o', this.name, 'destroy', obj)
+
     if (obj) store.get(this.name).delete(id)
 
     if (obj && obj.grantId) {
       grantable.forEach(grant => {
         store.get(grant).forEach((value, key) => {
-          if (obj.grantId === value.grantId) store.get(grant).delete(key)
+          if (obj.grantId === value.grantId) {
+            store.get(grant).delete(key)
+
+            debug('%o', this.name, 'destroy by same grandId', obj.grantId, key)
+            debug('%o', this.name, 'destroy by same grandId', value)
+          }
         })
       })
     }
@@ -59,7 +76,7 @@ class MyAdpter {
     return Promise.resolve()
   }
 
-  static connect () {
+  static connect() {
     store = new Map()
     grantable.forEach(grant => store.set(grant, new Map()))
   }

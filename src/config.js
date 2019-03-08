@@ -3,7 +3,8 @@ const Account = require('./account')
 module.exports = {
   findById: Account.findById,
   features: {
-    devInteractions: true
+    devInteractions: true,
+    discovery: true,
   },
   cookies: {
     // names: {
@@ -24,10 +25,10 @@ module.exports = {
     //   httpOnly: true,
     //   maxAge: 600000
     // },
-    keys: ['secret']
+    keys: ['secret'],
   },
-  interactionUrl (ctx, interaction) {
+  interactionUrl(ctx, interaction) {
     debug('%o', ctx, interaction)
     return `/signin/${ctx.oidc.uuid}`
-  }
+  },
 }
