@@ -16,8 +16,6 @@ class MyAdpter {
   }
 
   upsert (id, payload, expiresIn) {
-    debug(this.name, 'upsert', id, payload, store)
-
     let obj = store.get(this.name).get(id) || {}
     obj = Object.assign(obj, payload)
 
@@ -25,32 +23,38 @@ class MyAdpter {
       if (payload[key] === undefined) delete obj[key]
     })
 
-    store.get(this.name).set(id, payload)
+    store.get(this.name).set(id, obj)
 
-    debug(this.name, 'upsert check store', store)
+    debug('%o', this.name, 'upsert', store.get(this.name).get(id))
     return Promise.resolve()
   }
 
   find (id) {
-    debug(this.name, 'find', id, store)
-    return Promise.resolve(store.get(this.name).get(id))
+    const obj = store.get(this.name).get(id)
+    debug('%o', this.name, 'find', id, obj)
+    return Promise.resolve(obj)
   }
 
   consume (id) {
     let obj = store.get(this.name).get(id)
-    obj.consumed = Date.now()
+    const now = Date.now()
+    obj.consumed = now
+
+    debug('%o', this.name, 'consume', id, obj, now)
     return Promise.resolve()
   }
 
   destroy (id) {
     let obj = store.get(this.name).get(id)
-    let grantId = obj && obj.grantId
+    if (obj) store.get(this.name).delete(id)
 
-    grantable.forEach(grant => {
-      store.get(grant).forEach((value, key) => {
-        if (grantId === value.grantId) store.get(grant).delete(key)
+    if (obj && obj.grantId) {
+      grantable.forEach(grant => {
+        store.get(grant).forEach((value, key) => {
+          if (obj.grantId === value.grantId) store.get(grant).delete(key)
+        })
       })
-    })
+    }
 
     return Promise.resolve()
   }

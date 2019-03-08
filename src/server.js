@@ -20,17 +20,24 @@ const oidc = new Provider(`http://${HOST}:${PORT}`, config)
     keystore: require('./sign-key.json')
   })
 
+  oidc.on('server_error', (err, ctx) => {
+    throw err
+  })
   oidc.on('grant.error', (err, ctx) => debug(err, ctx))
 
   // let adapterTester = new oidc.constructor.AdapterTest(oidc)
   // await adapterTester.execute()
+
+  app.keys = config.cookies.keys
 
   const signCtrl = require('./signin.controller')
   app.use(mount('/signin', signCtrl(oidc)))
 
   app.use(mount(oidc.app))
 
-  server = app.listen(PORT, HOST, () => console.log(`id server listening at ${PORT}`))
+  server = app.listen(PORT, HOST, () => {
+    console.log(`id server listening at ${PORT}`)
+  })
 })().catch(error => {
   if (server && server.listening) server.close()
 
