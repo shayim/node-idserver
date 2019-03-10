@@ -1,0 +1,17 @@
+<form action="/signin/<%= details.uuid %>" method="POST">
+  <input type="hidden" name="uuid" value="<%= details.uuid %>">
+  <div>
+    <label>email:</label>
+    <input name="email" placeholder="your email..." required>
+  </div>
+  <div>
+    <label>password:</label>
+    <input type="password" name="password" placeholder="your password..." required>
+  </div>
+  <div>
+    <label><input type="checkbox" name="remember" value="yes" checked="yes">Remember Me</labe>
+  </div>
+  <div>
+    <button type="submit">Sign in</button>
+  </div>
+</form>

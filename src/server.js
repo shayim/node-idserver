@@ -1,5 +1,7 @@
+const path = require('path')
 const Provider = require('oidc-provider')
 const Koa = require('koa')
+const render = require('koa-ejs')
 const mount = require('koa-mount')
 const debug = require('debug')('idserver:error')
 
@@ -23,24 +25,29 @@ const oidc = new Provider(`http://${HOST}:${PORT}`, config)
   oidc.on('server_error', (err, ctx) => {
     throw err
   })
-  oidc.on('grant.error', (err, ctx) => debug(err, ctx))
+  oidc.on('grant.error', (err, ctx) => console(err, ctx))
 
   // let adapterTester = new oidc.constructor.AdapterTest(oidc)
   // await adapterTester.execute()
 
   app.keys = config.cookies.keys
 
-  const signCtrl = require('./signin.controller')
-  app.use(mount('/signin', signCtrl(oidc)))
+  render(app, {
+  root: path.join(__dirname, 'view'),
+  viewExt: 'html',
+  cache: false,
+});
 
-  app.use(mount(oidc.app))
+  const interaction = require('./interaction')
+  app.use(interaction(oidc).routes())
+    app.use(mount(oidc.app))
 
   server = app.listen(PORT, HOST, () => {
-    console.log(`id server listening at ${PORT}`)
+    console.log('%o', `id server listening at ${PORT}`)
   })
 })().catch(error => {
   if (server && server.listening) server.close()
 
-  debug(error)
+  console.log(error)
   process.exitCode = 1
 })

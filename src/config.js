@@ -1,34 +1,23 @@
 const debug = require('debug')('idserver:config')
 const Account = require('./account')
+const supportedClaims = require('./supported-claims')
 module.exports = {
+  discovery: {
+    claim_types_supported: ['normal', 'aggregated', 'distributed']
+  },
   findById: Account.findById,
+  claims: supportedClaims,
   features: {
-    devInteractions: true,
-    discovery: true,
+    devInteractions: false,
+    sessionManagement: true
   },
   cookies: {
-    // names: {
-    //   session: '_session',
-    //   interaction: 'grant',
-    //   resume: 'grant',
-    //   state: '_state'
-    // },
-    // long: {
-    //   secure: undefined,
-    //   signed: true,
-    //   httpOnly: true,
-    //   maxAge: 1209600000
-    // },
-    // short: {
-    //   secure: undefined,
-    //   signed: true,
-    //   httpOnly: true,
-    //   maxAge: 600000
-    // },
-    keys: ['secret'],
+    keys: ['secret']
   },
-  interactionUrl(ctx, interaction) {
-    debug('%o', ctx, interaction)
+  interactionUrl (ctx, interaction) {
+    debug('%o', 'interactionUrl')
+    debug('%o', ctx)
+    debug('%o', interaction)
     return `/signin/${ctx.oidc.uuid}`
-  },
+  }
 }
