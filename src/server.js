@@ -4,6 +4,8 @@ const render = require('koa-ejs')
 const mount = require('koa-mount')
 const Provider = require('oidc-provider')
 
+require('dotenv').config()
+
 // const debug = require('debug')('idserver:error')
 
 const HOST = 'localhost'

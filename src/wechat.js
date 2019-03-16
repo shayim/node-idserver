@@ -3,8 +3,8 @@ const Account = require('./account')
 const WechatStrategy = require('passport-wechat')
 
 module.exports = new WechatStrategy({
-  appID: 'wx04eefc5808ff574c',
-  appSecret: '4694018aa1f7d96305940a6033e182eb',
+  appID: process.env.LOGIN_AUTH_weixin_clientID,
+  appSecret: process.env.LOGIN_AUTH_weixin_clientSecret,
   scope: 'snsapi_login',
   client: 'web'
 }, async function (at, rt, pf, exp, done) {
