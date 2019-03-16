@@ -7,17 +7,17 @@ module.exports = {
   },
   findById: Account.findById,
   claims: supportedClaims,
-  features: {
-    devInteractions: false,
-    sessionManagement: true
-  },
   cookies: {
     keys: ['secret']
   },
   interactionUrl (ctx, interaction) {
-    debug('%o', 'interactionUrl')
-    debug('%o', ctx)
-    debug('%o', interaction)
+    debug('%s %o %o', 'interactionUrl', ctx.oidc, interaction)
     return `/signin/${ctx.oidc.uuid}`
+  },
+  features: {
+    // frontchannelLogout: true,
+    backchannelLogout: true,
+    devInteractions: false,
+    sessionManagement: true
   }
 }

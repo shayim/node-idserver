@@ -11,13 +11,17 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^3.0.4",
     "debug": "^4.1.1",
     "koa": "^2.7.0",
     "koa-body": "^4.1.0",
     "koa-ejs": "^4.2.0",
     "koa-mount": "^4.0.0",
+    "koa-passport": "^4.1.1",
     "koa-router": "^7.4.0",
+    "mongoose": "^5.4.19",
     "oidc-provider": "^5.5.5",
+    "passport-wechat": "^2.0.4",
     "uuid": "^3.3.2"
   },
   "devDependencies": {}

@@ -1,18 +1,27 @@
 const path = require('path')
-const Provider = require('oidc-provider')
 const Koa = require('koa')
 const render = require('koa-ejs')
 const mount = require('koa-mount')
-const debug = require('debug')('idserver:error')
+const Provider = require('oidc-provider')
+
+// const debug = require('debug')('idserver:error')
 
 const HOST = 'localhost'
 const PORT = process.env.PORT || 8000
 
-let server
-const app = new Koa()
-
 const config = require('./config')
 const oidc = new Provider(`http://${HOST}:${PORT}`, config)
+
+const mongoose = require('mongoose')
+mongoose.connect('mongodb://localhost:27017/oidc-id-server', {
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  promiseLibrary: global.Promise
+}).then(m => console.log('mongodb connected'))
+
+let server
+const app = new Koa()
+app.keys = config.cookies.keys
 
 ;
 (async () => {
@@ -30,17 +39,18 @@ const oidc = new Provider(`http://${HOST}:${PORT}`, config)
   // let adapterTester = new oidc.constructor.AdapterTest(oidc)
   // await adapterTester.execute()
 
-  app.keys = config.cookies.keys
+  const passport = require('./passport')
+  app.use(passport.initialize())
 
   render(app, {
-  root: path.join(__dirname, 'view'),
-  viewExt: 'html',
-  cache: false,
-});
+    root: path.join(__dirname, 'view'),
+    viewExt: 'html',
+    cache: false
+  })
 
   const interaction = require('./interaction')
   app.use(interaction(oidc).routes())
-    app.use(mount(oidc.app))
+  app.use(mount(oidc.app))
 
   server = app.listen(PORT, HOST, () => {
     console.log('%o', `id server listening at ${PORT}`)

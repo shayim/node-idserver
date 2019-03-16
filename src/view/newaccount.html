@@ -1,4 +1,4 @@
-<form action="/signin/<%= details.uuid %>" method="POST">
+<form action="/signin/<%= details.uuid %>/newaccount" method="POST">
   <input type="hidden" name="uuid" value="<%= details.uuid %>">
   <div>
     <label>email:</label>
@@ -12,11 +12,6 @@
     <label><input type="checkbox" name="remember" value="yes" checked="yes">Remember Me</labe>
   </div>
   <div>
-    <button type="submit">Sign in</button>
-    <a href="/signin/<%= details.uuid %>/newaccount">Sign up</a>
+    <button type="submit">Sign up</button>
   </div>
 </form>
-<h1>External Login:</h1>
-<div>
-  <a href="/signin/<%= details.uuid %>/wechat">Sign in with Weixin</a>
-</div>
