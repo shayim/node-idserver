@@ -94,10 +94,9 @@ module.exports = function (provider) {
       const account = await Account.findByLogin(ctx.request.body)
 
       let success
-      if (!account) {
+      if (account) {
         success = await bcrypt.compare(ctx.request.body.password, account[1].password)
       }
-
       if (!success) throw new AccessDenied()
 
       const result = {
