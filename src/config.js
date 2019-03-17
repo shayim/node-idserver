@@ -1,5 +1,7 @@
 const debug = require('debug')('idserver:config')
-const Account = require('./account')
+const {
+  Account
+} = require('./mongo-account')
 const supportedClaims = require('./supported-claims')
 module.exports = {
   discovery: {
@@ -15,7 +17,7 @@ module.exports = {
     return `/signin/${ctx.oidc.uuid}`
   },
   features: {
-    // frontchannelLogout: true,
+    frontchannelLogout: true,
     backchannelLogout: true,
     devInteractions: false,
     sessionManagement: true

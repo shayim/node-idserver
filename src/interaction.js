@@ -3,7 +3,10 @@ const passport = require('koa-passport')
 const bodyParser = require('koa-body')()
 const Router = require('koa-router')
 const bcrypt = require('bcrypt')
-const Account = require('./account')
+const {
+  Account,
+  AccountModel
+} = require('./mongo-account')
 
 module.exports = function (provider) {
   const router = new Router()
@@ -31,10 +34,15 @@ module.exports = function (provider) {
     } = ctx.request.body
     if (!email || !password) throw new Error('no email or password found')
     let hash = await bcrypt.hash(password, 10)
-    let account = new Account(undefined, {
+    let account = new AccountModel({
       email,
-      password: hash
+      password: hash,
+      provider: 'local'
     })
+
+    account = await account.save()
+
+    console.log(account.id)
 
     const result = {
       login: {
@@ -51,7 +59,6 @@ module.exports = function (provider) {
 
   router.get('/signin/:grant/wechat', async (ctx, next) => {
     const url = ctx.URL + '/callback'
-    console.log(url)
 
     passport.authenticate('wechat', {
       callbackURL: url
@@ -91,17 +98,17 @@ module.exports = function (provider) {
 
   router.post('/signin/:grant', bodyParser, async (ctx, next) => {
     try {
-      const account = await Account.findByLogin(ctx.request.body)
+      const account = await Account.findByLogin(ctx.request.body.email)
 
       let success
       if (account) {
-        success = await bcrypt.compare(ctx.request.body.password, account[1].password)
+        success = await bcrypt.compare(ctx.request.body.password, account.password)
       }
       if (!success) throw new AccessDenied()
 
       const result = {
         login: {
-          account: account[0],
+          account: account.id,
           remember: !!ctx.request.body.remember,
           ts: Math.floor(Date.now() / 1000)
         },

@@ -1,6 +1,8 @@
 const passport = require('koa-passport')
 
-const Account = require('./account')
+const {
+  AccountModel
+} = require('./mongo-account')
 const weixin = require('./wechat')
 
 passport.serializeUser((user, done) => {
@@ -9,7 +11,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (id, done) => {
   try {
-    const account = await Account.findById(id)
+    const account = await AccountModel.findById(id)
     done(null, account)
   } catch (error) {
     console.log(error)
