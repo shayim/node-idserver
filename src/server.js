@@ -28,13 +28,14 @@ app.keys = config.cookies.keys
 ;
 (async () => {
   await oidc.initialize({
-    adapter: require('./adapter'),
+    adapter: require('./mongo-adapter').MongoAdatper,
+    // adapter: require('./adapter'),
     clients: require('./clients'),
     keystore: require('./sign-key.json')
   })
 
   oidc.on('server_error', (err, ctx) => {
-    throw err
+    console.log(err)
   })
   oidc.on('grant.error', (err, ctx) => console(err, ctx))
 

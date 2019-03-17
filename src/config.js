@@ -13,7 +13,7 @@ module.exports = {
     keys: ['secret']
   },
   interactionUrl (ctx, interaction) {
-    debug('%s %o %o', 'interactionUrl', ctx.oidc, interaction)
+    // debug('%s %o %o', 'interactionUrl', ctx.oidc, interaction)
     return `/signin/${ctx.oidc.uuid}`
   },
   features: {

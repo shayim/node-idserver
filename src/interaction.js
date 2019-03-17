@@ -83,9 +83,10 @@ module.exports = function (provider) {
 
   router.get('/signin/:grant', async (ctx, next) => {
     const details = await provider.interactionDetails(ctx.req)
+
     const client = await provider.Client.find(details.params.client_id)
 
-    debug('%s %o %o', 'get', details, client)
+    // debug('%s %o %o', 'get', details, client)
 
     if (details.interaction.error === 'login_required') {
       await ctx.render('signin', {

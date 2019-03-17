@@ -148,11 +148,11 @@ module.exports.Account = class Account {
           })
         }
         return {
-          sub: account.id,
-          ...(userInfo.profile && userInfo.profile.names ? userInfo.profile.names : undefined),
-          ...(userInfo.gender ? {
-            gender: userInfo.gender
-          } : undefined)
+          sub: account.id
+          // ...(userInfo.profile && userInfo.profile.names ? userInfo.profile.names : undefined),
+          // ...(userInfo.gender ? {
+          //   gender: userInfo.gender
+          // } : undefined)
         }
       }
     }
